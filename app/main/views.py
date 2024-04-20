@@ -6,11 +6,18 @@ from django.shortcuts import render
 
 def index(request):
     context = {
-        'title': 'Home',
-        'content': 'Welcome to Home page!'
+        'title': 'ECONO - Главная',
+        'content': 'Магазин окон ECONO'
+
     }
     return render(request, 'main/index.html', context=context)
 
 
 def about(request):
-    return HttpResponse("AbOuT PaGe.")
+    context = {
+        'title': 'ECONO - О нас',
+        'content': 'О нас',
+        'text_on_page': 'Ваше счастье и красивый вид -- наше работа'
+
+    }
+    return render(request, 'main/about.html', context=context)
