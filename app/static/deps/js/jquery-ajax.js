@@ -172,12 +172,12 @@ $(document).ready(function () {
     //             var cartItemsContainer = $("#cart-items-container");
     //             cartItemsContainer.html(data.cart_items_html);
 
-    //         },
-    //         error: function (data) {
-    //             console.log("Ошибка при добавлении товара в корзину");
-    //         },
-    //     });
-    // }
+            },
+            error: function (data) {
+                console.log("Ошибка при добавлении товара в корзину");
+            },
+        });
+    }
 
     // Берем из разметки элемент по id - оповещения от django
     var notification = $('#notification');
