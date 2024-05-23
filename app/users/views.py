@@ -1,11 +1,14 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib import auth, messages
+from django.db.models import Prefetch
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
-from django.contrib import auth, messages
 from django.urls import reverse
-
 from carts.models import Cart
-from users.forms import UserLoginForm, UserRegistrationForm, ProfileForm
+from orders.models import Order, OrderItem
+
+from users.forms import ProfileForm, UserLoginForm, UserRegistrationForm
+
 
 def login(request):
     if request.method == 'POST':
@@ -63,21 +66,29 @@ def registration(request):
     }
     return render(request, 'users/registration.html', context)
 
-
 @login_required
 def profile(request):
     if request.method == 'POST':
         form = ProfileForm(data=request.POST, instance=request.user, files=request.FILES)
         if form.is_valid():
             form.save()
-            messages.success(request, "Профайл успешно обновлен.")
+            messages.success(request, "Профайл успешно обновлен")
             return HttpResponseRedirect(reverse('user:profile'))
     else:
         form = ProfileForm(instance=request.user)
 
+    orders = Order.objects.filter(user=request.user).prefetch_related(
+                Prefetch(
+                    "orderitem_set",
+                    queryset=OrderItem.objects.select_related("product"),
+                )
+            ).order_by("-id")
+        
+
     context = {
-        'title': 'Econo - Кабинет',
-        'form': form
+        'title': 'Home - Кабинет',
+        'form': form,
+        'orders': orders,
     }
     return render(request, 'users/profile.html', context)
 
@@ -87,8 +98,6 @@ def users_cart(request):
 
 @login_required
 def logout(request):
-    messages.success(request, f"{request.user.username}, Вы вышли из аккаунта.")
+    messages.success(request, f"{request.user.username}, Вы вышли из аккаунта")
     auth.logout(request)
-    return HttpResponseRedirect(reverse('main:index'))
-
-
+    return redirect(reverse('main:index'))
