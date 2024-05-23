@@ -28,6 +28,11 @@
                     {% include "carts/includes/included_cart.html" %}
                     <!-- Закончилась разметка корзины -->
                 </div>
+                {% comment %} {% if carts %}
+                    <a class="btn btn-dark" href="{% url "orders:create_order" %}">
+                        Оформить заказ
+                    </a>
+                {% endif %} {% endcomment %}
             </div>
         </div>
     </div>
